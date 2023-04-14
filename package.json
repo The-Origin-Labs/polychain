@@ -1,0 +1,35 @@
+{
+  "name": "polychain",
+  "version": "1.0.0",
+  "description": "Polychain",
+  "main": "server.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "cypress": "cypress open",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/siddhantprateek/polychain.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/siddhantprateek/polychain/issues"
+  },
+  "homepage": "https://github.com/siddhantprateek/polychain#readme",
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.8.3",
+    "cors": "^2.8.5",
+    "cypress": "^12.9.0",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}
