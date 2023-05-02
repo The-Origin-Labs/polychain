@@ -8,14 +8,20 @@ contract Property is ERC721, Ownable {
 
   constructor() ERC721("LandOwnership", "LRS"){}
 
-  struct LandProperty{
-    uint256 tokenId;
+  struct LandProperty {
+    uint256 propertyId;
     string location;
     uint256 price;
+    // mapping(address => uint256) shares;
   }
 
+//   LandProperty public landPropertyInstance;
+  
+  // token Id counter
+  uint256 private _propertyIdCounter;
+
   // properties owned
-  mapping(uint256 => Property) public properties;
+  mapping(uint256 => LandProperty) public properties;
 
   // Events:
   // PropertyCreated
@@ -51,24 +57,42 @@ contract Property is ERC721, Ownable {
   );
 
   // SharedOwnerAdded
-  event SharedOwnerAdded(
+  event SharedOwnerUpdate(
     uint256 indexed propertyId, 
     address indexed owner, 
-    uint256 percentageOwnership
+    uint256 shares
   );
 
-  // TODO:  
+  // TODO:
   // SetPropertyPrice / UpdatePropertyPrice
-  function SetProperty() public {}
+  function SetProperty() public {
+
+  }
   
   // TransferOwnership 
   function TransferOwnership() public {}
   
   // CreateProperty
-  function CreateProperty() public {}
+  function CreateProperty(string memory _location, uint256 _price) public onlyOwner {
+    _propertyIdCounter = _propertyIdCounter + 1;
+    uint256 newPropertyId = _propertyIdCounter;
+
+    properties[newPropertyId] = LandProperty(newPropertyId, _location, _price);
+    _mint(msg.sender, newPropertyId);
+    
+    emit PropertyCreated(newPropertyId, _location, _price);
+    emit SharedOwnerUpdate(newPropertyId, msg.sender, 100);
+  }
   
   // BuyProperty
-  function BuyProperty() public {}
+  function BuyProperty(uint256 _propertyId) public payable {
+    LandProperty storage landprop = properties[_propertyId];
+    require(landprop.propertyId == _propertyId, "Property does not exist.");
+    require(msg.value == landprop.price, "Insufficient funds to buy the property.");  
+
+    address propertyOwner = ownerOf(_propertyId);
+    require(propertyOwner != msg.sender, "You already own this property.");
+  }
 
   // PropertyAvailability
   function PropertyAvailability() public {}
