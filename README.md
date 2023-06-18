@@ -5,19 +5,14 @@
 --- 
 ## App Features
 
+### Tech Stack
+- `NodeJs`
+- `Solidity`
+- `Truffle` - Framework for smart contract development.
+- `Web3.Js` - Smart contract interaction
+- `Cypress` - E2E Testing
+
 ### 👌 Features
-
-- 
-- 
-- 
-
-### ⚡ Performance
-
-- 
-- 
-- 
-
-### 🔌 Integrations
 
 - 
 - 
@@ -25,11 +20,18 @@
 
 ## Repository folder structure
 ```bash
-
-├── README.md 
+├── README.md
+├── build
 ├── contracts # solidity contract
-├── migrations # solidity contract migrations scripts
+├── controller 
+├── cypress # e2e testing
+├── cypress.config.js
+├── migrations  # solidity contract migrations scripts
+├── node_modules
+├── package.json
+├── routes
+├── server.js
 ├── test # contract testing code
-└── truffle-config.js # truffe configuration -> https://trufflesuite.com/docs/truffle/reference/configuration/
-
+├── truffle-config.js # truffe configuration -> https://trufflesuite.com/docs/truffle/reference/configuration/
+└── yarn.lock
 ```
