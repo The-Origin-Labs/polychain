@@ -1,5 +1,5 @@
 
-// require('dotenv').config();
+require('dotenv').config();
 // const { MNEMONIC, PROJECT_ID } = process.env;
 
 // const HDWalletProvider = require('@truffle/hdwallet-provider');
@@ -13,7 +13,7 @@ module.exports = {
      host: "127.0.0.1",     // Localhost (default: none)
      port: 7545,            // Standard Ethereum port (default: none)
      network_id: "*",       // Any network (default: none)
-     from: '0x92c1cfb7806Ad2916b85f1803F813328b2D26501',
+     from: '0xbd5eD625233A56f0076B78ACAB933A499872C9A1',
     },
     //polygon Infura mainnet
     polygon_infura_mainnet: {
