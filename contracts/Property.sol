@@ -12,7 +12,7 @@ contract Property is ERC721, Ownable {
     uint256 propertyId;
     string location;
     uint256 price;
-    // mapping(address => uint256) shares;
+    mapping(address => uint256) shares;
   }
 
 //   LandProperty public landPropertyInstance;
@@ -64,22 +64,22 @@ contract Property is ERC721, Ownable {
   );
 
   // TODO:
-  // SetPropertyPrice / UpdatePropertyPrice
-  function SetProperty() public {
-
-  }
-  
-  // TransferOwnership 
-  function TransferOwnership() public {}
-  
   // CreateProperty
   function CreateProperty(string memory _location, uint256 _price) public onlyOwner {
     _propertyIdCounter = _propertyIdCounter + 1;
     uint256 newPropertyId = _propertyIdCounter;
 
-    properties[newPropertyId] = LandProperty(newPropertyId, _location, _price);
+    // error location
+    //  LandProperty(newPropertyId, _location, _price, _shares);
+    LandProperty storage newLandProperty = properties[newPropertyId];
+    newLandProperty.propertyId = newPropertyId;
+    newLandProperty.location = _location;
+    newLandProperty.price = _price;
+    newLandProperty.shares[msg.sender] = 100;
+
+    // minting the Property
     _mint(msg.sender, newPropertyId);
-    
+
     emit PropertyCreated(newPropertyId, _location, _price);
     emit SharedOwnerUpdate(newPropertyId, msg.sender, 100);
   }
@@ -92,28 +92,64 @@ contract Property is ERC721, Ownable {
 
     address propertyOwner = ownerOf(_propertyId);
     require(propertyOwner != msg.sender, "You already own this property.");
+
+    _transfer(propertyOwner, msg.sender, _propertyId);
+    if (msg.value > landprop.price) {
+        emit UpdatePrice(_propertyId, msg.value);
+        landprop.price = msg.value;
+    }
+
+    emit PropertySold(_propertyId, msg.sender, msg.value);
+    emit PropertyTransfered(_propertyId, msg.sender);
   }
 
-  // PropertyAvailability
-  function PropertyAvailability() public {}
+  // SetPropertyPrice / UpdatePropertyPrice
+  function updatePropertyPrice(uint256 _propertyId, uint256 _newPrice) public onlyOwner{
+      LandProperty storage landprop = properties[_propertyId];
+      require(landprop.propertyId == _propertyId, "Property does not exist.");
+
+      emit UpdatePrice(_propertyId, _newPrice);
+      landprop.price = _newPrice;
+  }
+
+    // TransferOwnership 
+  function TransferOwnership(address _newOwner, uint256 _propertyId) public onlyOwner {
+      address currentOwner = ownerOf(_propertyId);
+      require(currentOwner != _newOwner, "The new owner is already the current Owner.");
+
+      _transfer(currentOwner, _newOwner, _propertyId);
+      emit PropertyTransfered(_propertyId, _newOwner);
+  }
   
   // PropertyNominee
-  function PropertyNominee() public {}
-
-  // SharedOwnerShip, the visibility can be private as 
-  // sometimes shared ownership
-  function SharedOwnerShip() public {}
+  // function PropertyNominee() public {}
   
   // GetOwnershipPercentage
-  function GetOwnerhipPercentage() public {}
+  function GetOwnerhipPercentage(uint256 _propertyId, address _owner) public view returns(uint256) {
+      LandProperty storage landprop = properties[_propertyId];
+      require(landprop.propertyId == _propertyId, "Property does not exists.");
+
+      uint256 totalShares = 100;
+
+      uint256 ownerShares = landprop.shares[_owner];
+      uint256 ownershipPercentage = (ownerShares * 100) / totalShares;
+      return ownershipPercentage;
+  }
 
   // UpdateSharedOwner
-  function UpdateSharedOwner() public {}
+  // function UpdateSharedOwner() public {}
   
   // AddSharedOwner
-  function AddSharedOwner() private {}
+  function AddSharedOwner(address _sharedOwner, uint256 _shares, uint256 _propertyId) private onlyOwner { 
+      LandProperty storage landprop = properties[_propertyId];
+      require(landprop.propertyId == _propertyId, "Property does not exist.");
 
-  // FractionalOwnership
-  function FractionOwnership() private {}
+      uint256 previousShares = landprop.shares[msg.sender];
 
+      landprop.shares[msg.sender] = previousShares - _shares;
+      landprop.shares[_sharedOwner] = _shares;
+
+      emit SharedOwnerUpdate(_propertyId, _sharedOwner, _shares);
+      emit SharedOwnerUpdate(_propertyId, msg.sender, landprop.shares[msg.sender]);
+  }
 }
