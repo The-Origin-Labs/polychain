@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router()
-
+const {
+    CreatePropertyTransaction
+} = require('../controller/property_contract.controller')
 
 router.get("/", (req, res) => {
     res.status(200).json({
@@ -8,6 +10,8 @@ router.get("/", (req, res) => {
         "url": "/contract",
     })
 })
+
+router.post("/create", CreatePropertyTransaction)
 
 module.exports = router;
 
