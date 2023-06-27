@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router()
 const {
-    CreatePropertyTransaction
+    CreatePropertyTransaction, ModTx
 } = require('../controller/property_contract.controller')
 
 router.get("/", (req, res) => {
@@ -12,6 +12,7 @@ router.get("/", (req, res) => {
 })
 
 router.post("/create", CreatePropertyTransaction)
+router.post("/new", ModTx)
 
 module.exports = router;
 
