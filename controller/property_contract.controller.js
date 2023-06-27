@@ -1,6 +1,6 @@
+const TruffleContract = require('@truffle/contract')
 const { Web3 } = require('web3')
 const PropertyABI = require('../build/Property.json')
-const truffleContract = require('@truffle/contract')
 
 
 const PROVIDER_URL = 'http://127.0.0.1:7545'
@@ -10,17 +10,6 @@ const web3 = new Web3(provider)
 
 const contractAddress = "0xd5cfE46F09C56d90bd7E670cAfAD40FCA6A2932c"
 const propertyContract = new web3.eth.Contract(PropertyABI.abi, contractAddress)
-
-const TrufflePropertyContract = truffleContract({
-    abi: PropertyABI.abi,
-    address: contractAddress
-});
-
-// TrufflePropertyContract.setProvider(provider)
-
-// TrufflePropertyContract.setProvider(provider)
-
-
 
 // @desp: Create Property
 // @route: /contract/create
@@ -41,6 +30,8 @@ const CreatePropertyTransaction = async (req, res) => {
         const transactionCost = web3.utils.fromWei(result.gasUsed, 'ether')
         const blockNumber = web3.utils.toNumber(result.blockNumber)
         const cumlativeGasUsed = web3.utils.fromWei(result.cumulativeGasUsed, "ether")
+
+        
 
         console.log(result.logs)
 
@@ -63,8 +54,52 @@ const CreatePropertyTransaction = async (req, res) => {
 }
 
 
+const ModTx = async (req, res) => {
+    try {
+        const { location, price } = req.body
+
+        // get current Ethereum Accounts
+        let accounts = await web3.eth.getAccounts()
+        let networkId = await web3.eth.net.getId()
+        const { address } = PropertyABI.networks[networkId]
+        
+        const sender = accounts[0]
+
+        var instance = await new web3.eth.Contract(
+            PropertyABI.abi,
+            address
+        )
+        const result = await instance.methods.CreateProperty(location, price).send({ 
+            from: sender, 
+            gas: 2000000,
+        })
+        
+        const transactionCost = web3.utils.fromWei(result.gasUsed, 'ether')
+        const blockNumber = web3.utils.toNumber(result.blockNumber)
+        const cumlativeGasUsed = web3.utils.fromWei(result.cumulativeGasUsed, "ether")
+
+        res.status(201).send({
+            transactionHash: result.transactionHash,
+            blockHash: result.blockHash,
+            blockNumber: blockNumber,
+            cumlativeGasUsed: cumlativeGasUsed,
+            transactionCost: transactionCost,
+            from: result.from,
+            to: result.to,
+        })
+    
+    }catch(err) {
+        console.error('Error creating property', err)
+        res.status(500).json({
+            error: "Failded to create property."
+        })
+    }
+}
+
+
 
 
 module.exports = {
     CreatePropertyTransaction,
+    ModTx
 }
