@@ -1,0 +1,12 @@
+version: '3.4'
+
+services:
+  polychain:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: polychain
+    environment:
+      PORT: 8009
+    ports:
+      - 8009:8009
